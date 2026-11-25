@@ -41,10 +41,9 @@ components:
           - name: agent-kube
             mountPath: /var/run/secrets/agent-kube
             readOnly: true
-          # OpenCode's data dir ($XDG_DATA_HOME/opencode: auth.json, sessions) on the user's shared
-          # volume → `opencode auth login` once per user, not once per workspace
+          # the user's shared volume; only OpenCode's auth.json is linked from it (share-ai-login)
           - name: ai-tool-data
-            mountPath: /home/user/.local/share/opencode
+            mountPath: /var/run/ai-tool-data
     container:
       image: quay.io/devfile/universal-developer-image@sha256:959369621dc362f8800bad639ee77beef27b09851fd529f71c2d32d33ccc922a
       memoryRequest: 1Gi
@@ -93,6 +92,7 @@ components:
 events:
   postStart:
     - install-tools
+    - share-ai-login
 
 commands:
   # An `oc` that matches the cluster version, from the cluster's own console downloads service
@@ -105,6 +105,15 @@ commands:
         mkdir -p "$HOME/.local/bin" &&
         curl -fsSL --max-time 30 http://downloads.openshift-console.svc.cluster.local/amd64/linux/oc.tar
         | tar -x -C "$HOME/.local/bin" oc 2>/dev/null || true
+  # `opencode auth login` once per user instead of once per workspace: OpenCode's auth.json is a
+  # link to the user's shared volume. Its database and sessions stay in this workspace's home.
+  - id: share-ai-login
+    exec:
+      label: Share the OpenCode login across workspaces
+      component: tools
+      commandLine: >-
+        mkdir -p /var/run/ai-tool-data/opencode "$XDG_DATA_HOME/opencode" &&
+        ln -sfn /var/run/ai-tool-data/opencode/auth.json "$XDG_DATA_HOME/opencode/auth.json" || true
   - id: install
     exec:
       label: "1. Install dependencies"
