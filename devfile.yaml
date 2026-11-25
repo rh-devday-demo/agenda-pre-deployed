@@ -14,9 +14,11 @@ attributes:
         - name: agent-token
           secret:
             secretName: agenda-pre-deployed-agent-token
+            defaultMode: 420
         - name: agent-kube
           configMap:
             name: agenda-pre-deployed-agent-kubeconfig
+            defaultMode: 420
         # shared by all of the user's workspaces (created by the platform): the AI tool's login
         - name: ai-tool-data
           persistentVolumeClaim:
