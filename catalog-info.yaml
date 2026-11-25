@@ -1,0 +1,29 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: agenda-pre-deployed
+  description: Pre-deployed agenda application for Developer Day Vienna
+  annotations:
+    github.com/project-slug: rh-devday-demo/agenda-pre-deployed
+    backstage.io/source-location: url:https://github.com/rh-devday-demo/agenda-pre-deployed
+    backstage.io/kubernetes-id: agenda-pre-deployed
+    tekton.dev/cicd: "true"
+  tags: [nodejs, devspaces, ai-agent]
+  links:
+    - url: https://devspaces.apps.aro.cluster.8z6sv.uksouth.aroapp-hcp.io/#https://github.com/rh-devday-demo/agenda-pre-deployed?ai-provider=opencodeai/opencode
+      title: Open in Dev Spaces
+      icon: code
+    - url: https://argocd-server-agenda-pre-deployed-gitops.apps.aro.cluster.8z6sv.uksouth.aroapp-hcp.io/applications/agenda-pre-deployed-gitops/agenda-pre-deployed
+      title: Argo CD (team instance)
+      icon: dashboard
+    - url: https://console-openshift-console.apps.aro.cluster.8z6sv.uksouth.aroapp-hcp.io/pipelines/ns/agenda-pre-deployed-ci
+      title: Pipelines (OpenShift console)
+      icon: dashboard
+    - url: https://console-openshift-console.apps.aro.cluster.8z6sv.uksouth.aroapp-hcp.io/topology/ns/agenda-pre-deployed-dev
+      title: Topology (OpenShift console)
+      icon: dashboard
+spec:
+  type: service
+  lifecycle: experimental
+  owner: group:default/team-devday
+  system: devday-platform

@@ -1,0 +1,140 @@
+schemaVersion: 2.3.0
+metadata:
+  name: agenda-pre-deployed
+  displayName: agenda-pre-deployed – agent-ready workspace
+  description: Toolchain and CLIs for agenda-pre-deployed; runs in pbergsma-devspaces
+
+# The agent identity of THIS project (service account agenda-pre-deployed-agent, created by the
+# platform in pbergsma-devspaces) is mounted into this workspace only – other
+# projects' workspaces in the same namespace don't get it.
+attributes:
+  pod-overrides:
+    spec:
+      volumes:
+        - name: agent-token
+          secret:
+            secretName: agenda-pre-deployed-agent-token
+        - name: agent-kube
+          configMap:
+            name: agenda-pre-deployed-agent-kubeconfig
+        # shared by all of the user's workspaces (created by the platform): the AI tool's login
+        - name: ai-tool-data
+          persistentVolumeClaim:
+            claimName: ai-tool-data
+# The AI tool (OpenCode) is not part of this devfile: Dev Spaces injects it when the workspace
+# is created with ?ai-provider=opencodeai/opencode (the "Open in Dev Spaces" links do that), or
+# when OpenCode is selected in the dashboard. Registry: gitops/devspaces/ai-tool-registry.yaml
+
+components:
+  # Stock Universal Developer Image (Node.js 22, oc, tkn, kubectl, git, …), pinned by digest so
+  # every person and every agent gets the same toolchain.
+  - name: tools
+    attributes:
+      # this project's agent identity (volumes from the top-level pod-overrides)
+      container-overrides:
+        volumeMounts:
+          - name: agent-token
+            mountPath: /var/run/secrets/agent
+            readOnly: true
+          - name: agent-kube
+            mountPath: /var/run/secrets/agent-kube
+            readOnly: true
+          # OpenCode's data dir ($XDG_DATA_HOME/opencode: auth.json, sessions) on the user's shared
+          # volume → `opencode auth login` once per user, not once per workspace
+          - name: ai-tool-data
+            mountPath: /home/user/.local/share/opencode
+    container:
+      image: quay.io/devfile/universal-developer-image@sha256:959369621dc362f8800bad639ee77beef27b09851fd529f71c2d32d33ccc922a
+      memoryRequest: 1Gi
+      memoryLimit: 6Gi
+      cpuRequest: 500m
+      cpuLimit: "4"
+      mountSources: true
+      env:
+        # The image's PATH, stated explicitly (matches the digest above). Tools that Dev Spaces
+        # injects are prepended to it; without an explicit PATH the image's tool dirs get lost.
+        - name: PATH
+          value: /usr/local/google-cloud-sdk/bin:/home/tooling/.cargo/bin:/home/tooling/go/bin:/usr/local/go/bin:/home/tooling/.nvm/versions/node/v22.22.3/bin:/home/tooling/.local/share/coursier/bin:/home/tooling/.sdkman/candidates/gradle/current/bin:/home/tooling/.sdkman/candidates/java/current/bin:/home/tooling/.sdkman/candidates/maven/current/bin:/home/tooling/.krew/bin:/home/user/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        # Standard XDG locations on the persistent home, so tool configuration and logins
+        # survive workspace restarts (injected tools otherwise default to /tmp).
+        - name: XDG_CONFIG_HOME
+          value: /home/user/.config
+        - name: XDG_DATA_HOME
+          value: /home/user/.local/share
+        - name: XDG_STATE_HOME
+          value: /home/user/.local/state
+        - name: XDG_CACHE_HOME
+          value: /home/user/.cache
+        - name: TZ
+          value: Europe/Vienna
+        - name: PORT
+          value: "8080"
+        # Agent identity of this project and its namespaces
+        - name: KUBECONFIG
+          value: /var/run/secrets/agent-kube/config
+        - name: PROJECT_NAME
+          value: agenda-pre-deployed
+        - name: DEV_NAMESPACE
+          value: agenda-pre-deployed-dev
+        - name: CI_NAMESPACE
+          value: agenda-pre-deployed-ci
+        - name: GITOPS_NAMESPACE
+          value: agenda-pre-deployed-gitops
+      endpoints:
+        - name: preview
+          targetPort: 8080
+          exposure: public
+          protocol: https
+          attributes:
+            urlRewriteSupported: true
+
+events:
+  postStart:
+    - install-tools
+
+commands:
+  # An `oc` that matches the cluster version, from the cluster's own console downloads service
+  # (no internet needed). Falls back to the image's oc.
+  - id: install-tools
+    exec:
+      label: Install cluster-matching oc
+      component: tools
+      commandLine: >-
+        mkdir -p "$HOME/.local/bin" &&
+        curl -fsSL --max-time 30 http://downloads.openshift-console.svc.cluster.local/amd64/linux/oc.tar
+        | tar -x -C "$HOME/.local/bin" oc 2>/dev/null || true
+  - id: install
+    exec:
+      label: "1. Install dependencies"
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: npm install
+      group:
+        kind: build
+  - id: test
+    exec:
+      label: "2. Run tests"
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: npm test
+      group:
+        kind: test
+        isDefault: true
+  - id: preview
+    exec:
+      label: "3. Start app on the preview port (8080)"
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: PORT=8080 npm start
+      group:
+        kind: run
+        isDefault: true
+  - id: whoami
+    exec:
+      label: "Show the agent identity and its permissions"
+      component: tools
+      workingDir: ${PROJECT_SOURCE}
+      commandLine: >-
+        oc whoami &&
+        echo "--- permitted:" && oc get pipelineruns -n "$CI_NAMESPACE" &&
+        echo "--- denied (expected):" && (oc delete deployment agenda-pre-deployed -n "$DEV_NAMESPACE" --dry-run=server || true)
