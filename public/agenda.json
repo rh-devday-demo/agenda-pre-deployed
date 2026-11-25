@@ -1,0 +1,86 @@
+[
+  {
+    "title": "Registration",
+    "start": "2026-11-26T08:30:00+01:00",
+    "end": "2026-11-26T09:00:00+01:00",
+    "speaker": "Natale Vinto and Stephan Kraft"
+  },
+  {
+    "title": "Welcome",
+    "start": "2026-11-26T09:00:00+01:00",
+    "end": "2026-11-26T09:30:00+01:00"
+  },
+  {
+    "title": "Software Engineering at Red Hat in the Age of AI: What Changed and Where We\u2019re Heading",
+    "start": "2026-11-26T09:30:00+01:00",
+    "end": "2026-11-26T10:15:00+01:00",
+    "speaker": "Karel Piwko"
+  },
+  {
+    "title": "Elevating the Developer: Beyond Code Review in the Age of AI",
+    "start": "2026-11-26T10:15:00+01:00",
+    "end": "2026-11-26T10:45:00+01:00",
+    "speaker": "Michael Thirion"
+  },
+  {
+    "title": "Break",
+    "start": "2026-11-26T10:45:00+01:00",
+    "end": "2026-11-26T11:15:00+01:00"
+  },
+  {
+    "title": "Bring Your Own Agent - We\u2019ll bring the cluster",
+    "start": "2026-11-26T11:15:00+01:00",
+    "end": "2026-11-26T12:00:00+01:00",
+    "speaker": "Natale Vinto & Roberto Carratal\u00e1",
+    "description": "This session explores AI agents, MCP, and reusable Skills, highlighting secure, scalable deployment with OpenShift, Red Hat AI, sandboxing, and OpenClaw."
+  },
+  {
+    "title": "Secure Vibe-coding w/ a sandboxed cloud IDE",
+    "start": "2026-11-26T12:00:00+01:00",
+    "end": "2026-11-26T12:30:00+01:00",
+    "speaker": "Philipp Bergsmann"
+  },
+  {
+    "title": "Beyond the CVE Tsunami: Scaling Open Source Security with AI and Lightwell",
+    "start": "2026-11-26T12:30:00+01:00",
+    "end": "2026-11-26T13:00:00+01:00",
+    "speaker": "Jan Zeleny"
+  },
+  {
+    "title": "Lunch Break",
+    "start": "2026-11-26T13:00:00+01:00",
+    "end": "2026-11-26T14:00:00+01:00"
+  },
+  {
+    "title": "Quality Engineering for non-deterministic virtual assistants at Red Hat",
+    "start": "2026-11-26T14:00:00+01:00",
+    "end": "2026-11-26T14:45:00+01:00",
+    "speaker": "Jan Zeleny"
+  },
+  {
+    "title": "(optional) Hands-on Workshop",
+    "start": "2026-11-26T14:00:00+01:00",
+    "end": "2026-11-26T16:00:00+01:00",
+    "track": "workshop",
+    "speaker": "Natale Vinto, Syed Shaaf, Kevin Wondratsch"
+  },
+  {
+    "title": "Application Modernization in the AI Era",
+    "start": "2026-11-26T14:45:00+01:00",
+    "end": "2026-11-26T15:30:00+01:00",
+    "speaker": "Syed Shaaf",
+    "description": "Born from a KubeCon debate, this session explores how AI, autonomous agents, and enterprise architecture can turn application modernization and migration into a scalable, data-driven success."
+  },
+  {
+    "title": "Master your skills: Building skills you can trust",
+    "start": "2026-11-26T15:30:00+01:00",
+    "end": "2026-11-26T16:00:00+01:00",
+    "speaker": "Dejan Bosanac",
+    "description": "AI coding agents need strong context to succeed. Learn how to build, test, and share Agent Skills, ensure reliable triggers, prevent regressions, and scale agentic coding across teams."
+  },
+  {
+    "title": "Networking",
+    "start": "2026-11-26T16:00:00+01:00",
+    "end": "2026-11-26T18:00:00+01:00"
+  }
+]

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#11131b">
+    <title>Agenda | Developer Day Vienna</title>
+    <link rel="stylesheet" href="./style.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="shell hero">
+        <div class="event-mark"><span aria-hidden="true">&gt;_</span> From Vibe to Value</div>
+        <div>
+          <h1>Developer Day <span>Vienna</span></h1>
+          <p class="venue">Arcotel Wimberger Vienna</p>
+        </div>
+        <div class="clock">
+          <div class="clock-label"><span aria-hidden="true"></span> Vienna local time</div>
+          <time id="clock"></time>
+          <div id="clock-date"></div>
+        </div>
+      </div>
+    </header>
+    <main class="shell" aria-labelledby="agenda-heading">
+      <div class="section-head">
+        <h2 id="agenda-heading">Event agenda</h2>
+        <ul class="legend" aria-label="Session statuses">
+          <li data-status="completed">Completed</li>
+          <li data-status="current">Current</li>
+          <li data-status="upcoming">Upcoming</li>
+        </ul>
+      </div>
+      <p id="agenda-message" class="message" role="status">Loading the agenda&hellip;</p>
+      <div id="timeline"></div>
+      <noscript><p>Turn on JavaScript to load the agenda and see live session statuses.</p></noscript>
+    </main>
+  </body>
+</html>

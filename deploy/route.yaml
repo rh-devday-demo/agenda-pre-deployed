@@ -1,0 +1,15 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: agenda-pre-deployed
+  labels:
+    backstage.io/kubernetes-id: agenda-pre-deployed
+spec:
+  to:
+    kind: Service
+    name: agenda-pre-deployed
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
